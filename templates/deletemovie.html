@@ -1,0 +1,12 @@
+{% extends "main.html" %}
+{% block content %}
+{% include "header.html" %}
+<h2> Are you sure you want to delete the {{movie.name}} genre?</h2>
+
+<form action="{{url_for('deleteMovie', genre_id=movie.genre_id, movie_id=movie.id)}}" method = 'post'>
+
+	<button type="submit" class="btn btn-default delete" id="submit" type="submit">
+	<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>Delete</button>
+</form>
+<a href = '{{url_for('showMovies', genre_id=genre_id)}}'>Cancel</a>
+{% endblock %}

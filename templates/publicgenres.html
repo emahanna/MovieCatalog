@@ -1,0 +1,29 @@
+{% extends "main.html" %}
+{% block content %}
+{% include "header.html" %}
+	<div class="row top-list">
+		<div class="col-md-10"></div>
+		<div class="col-md-2 text-right"></div>
+	</div>
+	<div class="row divider blue">
+		<div class="col-md-12"></div>
+	</div>
+	<div class="row main banner">
+		<div class="col-sm-1"></div>
+		<div class="col-sm-11 padding-none">
+			<h1>Genres</h1>
+		</div>
+	</div>
+	{% for i in genres %}
+		<a href = "{{url_for('showMovies', genre_id=i.id)}}">
+			<div class="row genre-list">
+				<div class="col-md-3">
+					<h3>{{i.name}}</h3>
+				</div>
+			</a>
+				<div class="col-md-9">
+					{{i.description}}
+				</div>
+			</div>
+	{% endfor %}
+{% endblock %}
