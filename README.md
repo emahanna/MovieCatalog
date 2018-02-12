@@ -4,16 +4,16 @@ The project consists of:
 
 
 ## Software Requirements
-*Python 2.7 or above
-*SQLite 3
-*Flask
-*sqlalchemy
-*Terminal or command prompt
+* Python 2.7 or above
+* SQLite 3
+* Flask
+* sqlalchemy
+* Terminal or command prompt
 
-##Download
+## Download
 Download all files within this repository.
 
-##How to Run Application
+## How to Run Application
 
 1. enter the file directory location with all downloaded files. 
 
@@ -24,7 +24,7 @@ Download all files within this repository.
 4. run `finalproject.py` and navigate to localhost:5000 in your browser
 
 
-##How to Access API Endpoints
+## How to Access API Endpoints
 
 To access genres data: /genre/JSON
 
