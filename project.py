@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, \
     redirect, jsonify, url_for, flash
+from functools import wraps
 from sqlalchemy import create_engine, asc
 from sqlalchemy.orm import sessionmaker
 from database_setup import Base, Movie, Genre, User
@@ -22,6 +23,7 @@ CLIENT_ID = json.loads(open('client_secrets.json', 'r'
 
 app = Flask(__name__)
 
+# Connect to database
 engine = create_engine('sqlite:///movieswithusers.db')
 Base.metadata.bind = engine
 
@@ -150,6 +152,17 @@ def getUserID(email):
         return None
 
 
+def login_required(f):
+    @wraps(f)
+    def decorated_function (*args, **kwargs):
+        if 'username' in login_session:
+            return f(*args, **kwargs)
+        else:
+            flash("You are not allowed access")
+            return redirect('/login')
+    return decorated_function
+
+
 # Log out of web site
 @app.route('/gdisconnect')
 def gdisconnect():
@@ -179,18 +192,21 @@ def gdisconnect():
         return response
 
 
+# Genre JSON endpoint
 @app.route('/genre/JSON', methods=['GET'])
 def showGenresJSON():
     genres = session.query(Genre).all()
     return jsonify(genres=[g.serialize for g in genres])
 
 
+# JSON endpoint for movies in a genre
 @app.route('/genre/<int:genre_id>/movies/JSON', methods=['GET'])
 def showMoviesJSON(genre_id):
     movies = session.query(Movie).filter_by(genre_id=genre_id).all()
     return jsonify(movies=[m.serialize for m in movies])
 
 
+# JSON endpoint for a single movie
 @app.route('/genre/<int:genre_id>/movies/<int:movie_id>/JSON', methods=['GET'])
 def showOneMovieJSON(genre_id, movie_id):
     movie = session.query(Movie).filter_by(genre_id=genre_id,
@@ -198,6 +214,7 @@ def showOneMovieJSON(genre_id, movie_id):
     return jsonify(movie.serialize)
 
 
+# Displays all genres in database
 @app.route('/')
 @app.route('/genre/', methods=['GET'])
 def showGenres():
@@ -208,10 +225,10 @@ def showGenres():
         return render_template('genres.html', genres=genres)
 
 
+# Create a new genre
 @app.route('/genre/new', methods=['GET', 'POST'])
+@login_required
 def newGenre():
-    if 'username' not in login_session:
-        return redirect('/login')
     if request.method == 'POST':
         newgenre = Genre(name=request.form['name'],
                          description=request.form['description'],
@@ -223,11 +240,16 @@ def newGenre():
         return render_template('newgenre.html')
 
 
+# Edit a genre if the logged in user created the genre
 @app.route('/genre/<int:genre_id>/edit', methods=['GET', 'POST'])
+@login_required
 def editGenre(genre_id):
-    if 'username' not in login_session:
-        return redirect('/login')
     editedGenre = session.query(Genre).filter_by(id=genre_id).one()
+    if editedGenre.user_id != login_session['user_id']:
+        return """<script>function myFunction() {alert('You are not
+        authorized to edit this restaurant. Please create your own
+        restaurant in order to
+        edit.');}</script><body onload='myFunction()''>"""
     if request.method == 'POST':
         if request.form['name']:
             editedGenre.name = request.form['name']
@@ -240,11 +262,16 @@ def editGenre(genre_id):
         return render_template('editgenre.html', genre=editedGenre)
 
 
+# Delete a genre if thee logged in user created the genre
 @app.route('/genre/<int:genre_id>/delete', methods=['GET', 'POST'])
+@login_required
 def deleteGenre(genre_id):
-    if 'username' not in login_session:
-        return redirect('/login')
     genreToDelete = session.query(Genre).filter_by(id=genre_id).one()
+    if genreToDeleteToDelete.user_id != login_session['user_id']:
+        return """<script>function myFunction() {alert('You are not 
+        authorized to delete this restaurant. Please create your 
+        own restaurant in order to 
+        delete.');}</script><body onload='myFunction()''>"""
     if request.method == 'POST':
         session.delete(genreToDelete)
         flash('%s Successfully Deleted' % genreToDelete.name)
@@ -254,6 +281,7 @@ def deleteGenre(genre_id):
         return render_template('deletegenre.html', genre=genreToDelete)
 
 
+# Shows all movies in a genre
 @app.route('/genre/<int:genre_id>/')
 @app.route('/genre/<int:genre_id>/movies', methods=['GET'])
 def showMovies(genre_id):
@@ -265,10 +293,10 @@ def showMovies(genre_id):
         return render_template('movies.html', genre=genre, movies=movies)
 
 
+# Create a new movie if the user is logged in
 @app.route('/genre/<int:genre_id>/movies/new', methods=['GET', 'POST'])
+@login_required
 def newMovie(genre_id):
-    if 'username' not in login_session:
-        return redirect('/login')
     if request.method == 'POST':
         newMovie = Movie(name=request.form['name'],
                          description=request.form['description'],
@@ -282,12 +310,18 @@ def newMovie(genre_id):
         return render_template('newmovie.html', genre_id=genre_id)
 
 
+# Edits a movie if the logged in user created the movie
 @app.route('/genre/<int:genre_id>/movies/<int:movie_id>/edit',
            methods=['GET', 'POST'])
+@login_required
 def editMovie(genre_id, movie_id):
-    if 'username' not in login_session:
-        return redirect('/login')
     editedMovie = session.query(Movie).filter_by(id=movie_id).one()
+    if login_session['user_id'] != editedMovie.user_id:
+        return """<script>function myFunction() {alert('You
+        are not authorized to edit menu items to this
+        restaurant. Please create your own restaurant in
+        order to edit
+        items.');}</script><body onload='myFunction()''>"""
     if request.method == 'POST':
         if request.form['name']:
             editedMovie.name = request.form['name']
@@ -303,12 +337,18 @@ def editMovie(genre_id, movie_id):
                                movie=editedMovie)
 
 
+# Delete a movie if the logged in user created the movie
 @app.route('/genre/<int:genre_id>/movies/<int:movie_id>/delete',
            methods=['GET', 'POST'])
+@login_required
 def deleteMovie(genre_id, movie_id):
-    if 'username' not in login_session:
-        return redirect('/login')
     movieToDelete = session.query(Movie).filter_by(id=movie_id).one()
+    if login_session['user_id'] != movieToDelete.user_id:
+        return """<script>function myFunction() {alert('You are
+        not authorized to delete menu items to this
+        restaurant. Please create your own restaurant
+        in order to delete
+        items.');}</script><body onload='myFunction()''>"""
     if request.method == 'POST':
         session.delete(movieToDelete)
         flash('%s Successfully Deleted' % movieToDelete.name)
