@@ -233,4 +233,4 @@ genre6 = Genre(user_id=1, name="Thriller",
 session.add(genre6)
 session.commit()
 
-print "All movies added!"
+print ("All movies added!")
