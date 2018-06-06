@@ -86,7 +86,7 @@ def gconnect():
     if result['issued_to'] != CLIENT_ID:
         response = make_response(
             json.dumps("Token's client ID does not match app's."), 401)
-        print "Token's client ID does not match app's."
+        print ("Token's client ID does not match app's.")
         response.headers['Content-Type'] = 'application/json'
         return response
 
@@ -109,7 +109,7 @@ def gconnect():
     answer = requests.get(userinfo_url, params=params)
 
     data = answer.json()
-    print data
+    print (data)
 
     login_session['username'] = data['name']
     login_session['email'] = data['email']
@@ -125,7 +125,7 @@ def gconnect():
     output += login_session['username']
     output += '!</h1>'
     flash("you are now logged in as %s" % login_session['username'])
-    print "done!"
+    print ("done!")
     return output
 
 
