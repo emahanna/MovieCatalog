@@ -21,7 +21,7 @@ Download all files within this repository.
 
 3. run `lotsofmenus.py` to populate the database
 
-4. run `finalproject.py` and navigate to localhost:5000 in your browser
+4. run `project.py` and navigate to localhost:5000 in your browser
 
 
 ## How to Access API Endpoints
