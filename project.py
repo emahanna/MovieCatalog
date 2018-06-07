@@ -246,10 +246,7 @@ def newGenre():
 def editGenre(genre_id):
     editedGenre = session.query(Genre).filter_by(id=genre_id).one()
     if editedGenre.user_id != login_session['user_id']:
-        return """<script>function myFunction() {alert('You are not
-        authorized to edit this restaurant. Please create your own
-        restaurant in order to
-        edit.');}</script><body onload='myFunction()''>"""
+        return """<script>function myFunction() {alert('You are not authorized to edit this Genre. Please create your own genre in order to edit.');}</script><body onload='myFunction()''>"""
     if request.method == 'POST':
         if request.form['name']:
             editedGenre.name = request.form['name']
@@ -268,10 +265,7 @@ def editGenre(genre_id):
 def deleteGenre(genre_id):
     genreToDelete = session.query(Genre).filter_by(id=genre_id).one()
     if genreToDelete.user_id != login_session['user_id']:
-        return """<script>function myFunction() {alert('You are not 
-        authorized to delete this restaurant. Please create your 
-        own restaurant in order to 
-        delete.');}</script><body onload='myFunction()''>"""
+        return """<script>function myFunction() {alert('You are not authorized to delete this Genre. Please create your own restaurant in order to delete.');}</script><body onload='myFunction()''>"""
     if request.method == 'POST':
         session.delete(genreToDelete)
         flash('%s Successfully Deleted' % genreToDelete.name)
@@ -317,11 +311,7 @@ def newMovie(genre_id):
 def editMovie(genre_id, movie_id):
     editedMovie = session.query(Movie).filter_by(id=movie_id).one()
     if login_session['user_id'] != editedMovie.user_id:
-        return """<script>function myFunction() {alert('You
-        are not authorized to edit menu items to this
-        restaurant. Please create your own restaurant in
-        order to edit
-        items.');}</script><body onload='myFunction()''>"""
+        return return """<script>function myFunction() {alert('You are not authorized to edit this movie to this. Please create your own movie in order to edit.');}</script><body onload='myFunction()''>"""
     if request.method == 'POST':
         if request.form['name']:
             editedMovie.name = request.form['name']
@@ -344,11 +334,7 @@ def editMovie(genre_id, movie_id):
 def deleteMovie(genre_id, movie_id):
     movieToDelete = session.query(Movie).filter_by(id=movie_id).one()
     if login_session['user_id'] != movieToDelete.user_id:
-        return """<script>function myFunction() {alert('You are
-        not authorized to delete menu items to this
-        restaurant. Please create your own restaurant
-        in order to delete
-        items.');}</script><body onload='myFunction()''>"""
+        return """<script>function myFunction() {alert('You are not authorized to delete this movie. Please create your own movie in order to delete.');}</script><body onload='myFunction()''>"""
     if request.method == 'POST':
         session.delete(movieToDelete)
         flash('%s Successfully Deleted' % movieToDelete.name)
