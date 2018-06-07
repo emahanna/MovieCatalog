@@ -267,7 +267,7 @@ def editGenre(genre_id):
 @login_required
 def deleteGenre(genre_id):
     genreToDelete = session.query(Genre).filter_by(id=genre_id).one()
-    if genreToDeleteToDelete.user_id != login_session['user_id']:
+    if genreToDelete.user_id != login_session['user_id']:
         return """<script>function myFunction() {alert('You are not 
         authorized to delete this restaurant. Please create your 
         own restaurant in order to 
