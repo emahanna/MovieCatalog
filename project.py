@@ -311,7 +311,7 @@ def newMovie(genre_id):
 def editMovie(genre_id, movie_id):
     editedMovie = session.query(Movie).filter_by(id=movie_id).one()
     if login_session['user_id'] != editedMovie.user_id:
-        return return """<script>function myFunction() {alert('You are not authorized to edit this movie to this. Please create your own movie in order to edit.');}</script><body onload='myFunction()''>"""
+        return """<script>function myFunction() {alert('You are not authorized to edit this movie to this. Please create your own movie in order to edit.');}</script><body onload='myFunction()''>"""
     if request.method == 'POST':
         if request.form['name']:
             editedMovie.name = request.form['name']
